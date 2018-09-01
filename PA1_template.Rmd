@@ -76,7 +76,7 @@ head(no_na_data_set)
 
 7. Histogram of the total number of steps taken each day after missing values are imputed
 
-```{r}
+```{r totalstepshistogram}
  total_steps_no_na_values <- aggregate(no_na_data_set$steps ~ no_na_data_set$date, FUN=sum)
  hist(total_steps_no_na_values[,2], xlab = "Total steps", main = "Total steps by days", prob = TRUE, col = "green")
 ```
@@ -92,15 +92,9 @@ daysOfWeek_dataSet <- mutate(no_na_data_set, dayOfWeek = factor(case_when(
 head(daysOfWeek_dataSet)
 ```
 
-```{r}
-weekend_subset <- subset(daysOfWeek_dataSet, daysOfWeek_dataSet$dayOfWeek == "weekend")
-weekend_average <- aggregate(weekend_subset$steps ~ weekend_subset$interval, FUN = mean)
-weekday_subset <- subset(daysOfWeek_dataSet, daysOfWeek_dataSet$dayOfWeek == "weekday")
-weekday_average <- aggregate(weekday_subset$steps ~ weekday_subset$interval, FUN = mean)
-```
 
-```{r}
-par(mfrow = c(1,2))
-plot(weekend_average[,1], weekend_average[,2], type = "l", xlab = "Time Interval", ylab = "Weekend Steps Average", main = "Average Steps by time series")
-plot(weekday_average[,1], weekday_average[,2], type = "l", xlab = "Time Interval", ylab = "Weekday Steps Average")
+```{r panelplot}
+library(lattice)
+weekAggr_subset <- aggregate(daysOfWeek_dataSet$steps, by=list(inteval = daysOfWeek_dataSet$interval, dayOfWeek = daysOfWeek_dataSet$dayOfWeek), mean)
+xyplot(weekAggr_subset[,3] ~ weekAggr_subset[,1] | factor(weekAggr_subset$dayOfWeek), layout = c(1,2), type = "l", xlab = "Time Interval", ylab = "Weekend Steps Average", main = "Average Steps by time series") 
 ```
